@@ -1,103 +1,124 @@
 ﻿using System;
 
-public class Product
+namespace WarehouseApp
 {
-    private string _sku;
-    private string _name;
-    private decimal _price;
-    private int _quantity;
-
-    public Product(string sku, string name, decimal price, int quantity)
+    public class Product
     {
-        Sku = sku; // присваиваем через свойства — проверки не дублируются
-        Name = name;
-        Price = price;
-        Quantity = quantity;
-    }
+        private string _sku;
+        private string _name;
+        private decimal _price;
+        private int _quantity;
+        private int _minStock;
 
-    // Артикул задаётся один раз: снаружи изменить нельзя
-    public string Sku
-    {
-        get { return _sku; }
-        private set
+        public Product(string sku, string name, decimal price, int quantity, int minStock = 0)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Артикул не может быть пустым.");
-            _sku = value.Trim().ToUpper();
+            Sku = sku;
+            Name = name;
+            Price = price;
+            Quantity = quantity;
+            MinStock = minStock;
         }
-    }
 
-    // Наименование — аналогично
-    public string Name
-    {
-        get { return _name; }
-        private set
+        public string Sku
         {
-            if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Наименование не может быть пустым.");
-            _name = value.Trim();
+            get { return _sku; }
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Артикул не может быть пустым.");
+                _sku = value.Trim().ToUpper();
+            }
         }
-    }
 
-    public decimal Price
-    {
-        get { return _price; }
-        private set
+        public string Name
         {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), "Цена должна быть больше нуля.");
-            _price = value;
+            get { return _name; }
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Наименование не может быть пустым.");
+                _name = value.Trim();
+            }
         }
-    }
 
-    public int Quantity
-    {
-        get { return _quantity; }
-        private set
+        public decimal Price
         {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException(nameof(value), "Остаток не может быть отрицательным.");
-            _quantity = value;
+            get { return _price; }
+            private set
+            {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), "Цена должна быть больше нуля.");
+                _price = value;
+            }
         }
-    }
-    // Вычисляемое свойство: своего поля нет, значение выводится из других полей
-    public decimal TotalPrice
-    {
-        get { return _price * _quantity; }
-    }
 
-    // Ещё одно «производное» свойство — просто для удобства чтения кода
-    public bool IsOutOfStock
-    {
-        get { return _quantity == 0; }
-    }
-    // Приёмка товара на склад
-    public void AddStock(int amount)
-    {
-        if (amount <= 0)
-            throw new ArgumentOutOfRangeException(nameof(amount), "Количество при приёмке должно быть больше нуля.");
+        public int Quantity
+        {
+            get { return _quantity; }
+            private set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), "Остаток не может быть отрицательным.");
+                _quantity = value;
+            }
+        }
 
-        Quantity = Quantity + amount; // идём через свойство — проверка сработает ещё раз
-    }
+        public decimal TotalPrice
+        {
+            get { return _price * _quantity; }
+        }
 
-    // Отгрузка товара со склада
-    public void RemoveStock(int amount)
-    {
-        if (amount <= 0)
-            throw new ArgumentOutOfRangeException(nameof(amount), "Количество при отгрузке должно быть больше нуля.");
+        public bool IsOutOfStock
+        {
+            get { return _quantity == 0; }
+        }
 
-        if (amount > Quantity)
-            throw new InvalidOperationException($"Недостаточно товара: на складе {Quantity}, запрошено {amount}.");
+        public int MinStock
+        {
+            get { return _minStock; }
+            private set
+            {
+                if (value < 0 || value > 100000)
+                    throw new ArgumentOutOfRangeException(nameof(value), "Минимальный остаток должен быть от 0 до 100 000.");
+                _minStock = value;
+            }
+        }
 
-        Quantity = Quantity - amount;
-    }
+        public bool IsBelowMinStock
+        {
+            get { return _quantity < _minStock; }
+        }
 
-    // Изменение цены по правилам бизнеса, а не «просто присваивание»
-    public void ChangePrice(decimal newPrice)
-    {
-        if (newPrice > _price * 2m)
-            throw new InvalidOperationException("Цена не может вырасти более чем в 2 раза за одну операцию.");
+        public void AddStock(int amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "Количество при приёмке должно быть больше нуля.");
 
-        Price = newPrice;
+            Quantity = Quantity + amount;
+        }
+
+        public void RemoveStock(int amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "Количество при отгрузке должно быть больше нуля.");
+
+            if (amount > Quantity)
+                throw new InvalidOperationException($"Недостаточно товара: на складе {Quantity}, запрошено {amount}.");
+
+            Quantity = Quantity - amount;
+        }
+
+        public void ChangePrice(decimal newPrice)
+        {
+            if (newPrice > _price * 2m)
+                throw new InvalidOperationException("Цена не может вырасти более чем в 2 раза за одну операцию.");
+
+            Price = newPrice;
+        }
+
+        public void SetMinStock(int value)
+        {
+            MinStock = value;
+        }
     }
 }
