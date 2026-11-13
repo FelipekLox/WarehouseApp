@@ -39,12 +39,45 @@ namespace WarehouseApp
 
         public Product Find(string sku)
         {
+            if (string.IsNullOrWhiteSpace(sku))
+                return null;
+
+            string normalizedSku = sku.Trim().ToUpper();
             for (int i = 0; i < _count; i++)
             {
-                if (_products[i].Sku == sku)
+                if (_products[i].Sku == normalizedSku)
                     return _products[i];
             }
             return null;
+        }
+
+        public void Remove(string sku)
+        {
+            if (string.IsNullOrWhiteSpace(sku))
+                throw new ArgumentException("Артикул для удаления не может быть пустым.", nameof(sku));
+
+            string normalizedSku = sku.Trim().ToUpper();
+            int index = -1;
+
+            for (int i = 0; i < _count; i++)
+            {
+                if (_products[i].Sku == normalizedSku)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1)
+                throw new InvalidOperationException($"Товар с артикулом {normalizedSku} не найден на складе.");
+
+            for (int i = index; i < _count - 1; i++)
+            {
+                _products[i] = _products[i + 1];
+            }
+
+            _count = _count - 1;
+            _products[_count] = null;
         }
 
         public decimal GetTotalValue()
@@ -55,12 +88,42 @@ namespace WarehouseApp
             return total;
         }
 
+        public int GetTotalQuantity()
+        {
+            int totalQuantity = 0;
+            for (int i = 0; i < _count; i++)
+                totalQuantity = totalQuantity + _products[i].Quantity;
+            return totalQuantity;
+        }
+
         public Product[] GetProducts()
         {
             Product[] copy = new Product[_count];
             for (int i = 0; i < _count; i++)
                 copy[i] = _products[i];
             return copy;
+        }
+
+        public Product[] GetLowStockProducts()
+        {
+            int lowCount = 0;
+            for (int i = 0; i < _count; i++)
+            {
+                if (_products[i].IsBelowMinStock)
+                    lowCount++;
+            }
+
+            Product[] lowStockCopy = new Product[lowCount];
+            int currentIndex = 0;
+            for (int i = 0; i < _count; i++)
+            {
+                if (_products[i].IsBelowMinStock)
+                {
+                    lowStockCopy[currentIndex] = _products[i];
+                    currentIndex++;
+                }
+            }
+            return lowStockCopy;
         }
     }
 }

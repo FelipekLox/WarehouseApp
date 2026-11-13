@@ -83,6 +83,22 @@ namespace WarehouseApp
             {
                 Console.WriteLine("Ошибка списания: " + ex.Message);
             }
+
+            // Задача 4: Удаление позиции и отчёт по «дефициту»
+            Console.WriteLine($"\nВсего единиц товара на складе: {warehouse.GetTotalQuantity()} шт.");
+
+            Console.WriteLine("Отчёт по дефициту (GetLowStockProducts):");
+            foreach (Product p in warehouse.GetLowStockProducts())
+            {
+                Console.WriteLine($"[ДЕФИЦИТ] {p.Sku} | {p.Name} | Остаток: {p.Quantity} (мин: {p.MinStock})");
+            }
+
+            Product[] snapshotBeforeRemove = warehouse.GetProducts();
+            warehouse.Remove("SKU-002");
+
+            Console.WriteLine($"\nПосле удаления SKU-002:");
+            Console.WriteLine($"Позиций на складе (warehouse.Count): {warehouse.Count}");
+            Console.WriteLine($"Длина сохранённой ранее копии массива: {snapshotBeforeRemove.Length}");
         }
     }
 }
