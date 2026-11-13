@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WarehouseApp
+﻿public class Product
 {
-    internal class Product
-    {
-    }
+    public string Sku;
+    public string Name;
+    public decimal Price;
+    public int Quantity;
 }
