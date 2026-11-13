@@ -7,10 +7,19 @@ public class Product
     private decimal _price;
     private int _quantity;
 
+    public Product(string sku, string name, decimal price, int quantity)
+    {
+        Sku = sku; // присваиваем через свойства — проверки не дублируются
+        Name = name;
+        Price = price;
+        Quantity = quantity;
+    }
+
+    // Артикул задаётся один раз: снаружи изменить нельзя
     public string Sku
     {
         get { return _sku; }
-        set
+        private set
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentException("Артикул не может быть пустым.");
@@ -18,10 +27,11 @@ public class Product
         }
     }
 
+    // Наименование — аналогично
     public string Name
     {
         get { return _name; }
-        set
+        private set
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentException("Наименование не может быть пустым.");
@@ -32,7 +42,7 @@ public class Product
     public decimal Price
     {
         get { return _price; }
-        set
+        private set
         {
             if (value <= 0)
                 throw new ArgumentOutOfRangeException(nameof(value), "Цена должна быть больше нуля.");
@@ -43,7 +53,7 @@ public class Product
     public int Quantity
     {
         get { return _quantity; }
-        set
+        private set
         {
             if (value < 0)
                 throw new ArgumentOutOfRangeException(nameof(value), "Остаток не может быть отрицательным.");
