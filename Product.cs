@@ -71,4 +71,33 @@ public class Product
     {
         get { return _quantity == 0; }
     }
+    // Приёмка товара на склад
+    public void AddStock(int amount)
+    {
+        if (amount <= 0)
+            throw new ArgumentOutOfRangeException(nameof(amount), "Количество при приёмке должно быть больше нуля.");
+
+        Quantity = Quantity + amount; // идём через свойство — проверка сработает ещё раз
+    }
+
+    // Отгрузка товара со склада
+    public void RemoveStock(int amount)
+    {
+        if (amount <= 0)
+            throw new ArgumentOutOfRangeException(nameof(amount), "Количество при отгрузке должно быть больше нуля.");
+
+        if (amount > Quantity)
+            throw new InvalidOperationException($"Недостаточно товара: на складе {Quantity}, запрошено {amount}.");
+
+        Quantity = Quantity - amount;
+    }
+
+    // Изменение цены по правилам бизнеса, а не «просто присваивание»
+    public void ChangePrice(decimal newPrice)
+    {
+        if (newPrice > _price * 2m)
+            throw new InvalidOperationException("Цена не может вырасти более чем в 2 раза за одну операцию.");
+
+        Price = newPrice;
+    }
 }
