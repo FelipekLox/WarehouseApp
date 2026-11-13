@@ -70,6 +70,19 @@ namespace WarehouseApp
             {
                 Console.WriteLine("Ошибка назначения поставщика: " + ex.ParamName);
             }
+
+            // Задача 3: Списание с указанием причины
+            drill.WriteOff(2, "повреждение при транспортировке");
+            Console.WriteLine($"\nСписание выполнено: {drill.Name} | Остаток: {drill.Quantity} шт. | Всего списано: {drill.WrittenOffTotal} шт.");
+
+            try
+            {
+                drill.WriteOff(1, " ");
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine("Ошибка списания: " + ex.Message);
+            }
         }
     }
 }

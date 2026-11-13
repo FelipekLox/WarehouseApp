@@ -10,6 +10,7 @@ namespace WarehouseApp
         private int _quantity;
         private int _minStock;
         private Supplier _supplier;
+        private int _writtenOffTotal;
 
         public Product(string sku, string name, decimal price, int quantity, int minStock = 0)
         {
@@ -18,6 +19,7 @@ namespace WarehouseApp
             Price = price;
             Quantity = quantity;
             MinStock = minStock;
+            _writtenOffTotal = 0;
         }
 
         public string Sku
@@ -96,6 +98,11 @@ namespace WarehouseApp
             private set { _supplier = value; }
         }
 
+        public int WrittenOffTotal
+        {
+            get { return _writtenOffTotal; }
+        }
+
         public void AddStock(int amount)
         {
             if (amount <= 0)
@@ -134,6 +141,15 @@ namespace WarehouseApp
                 throw new ArgumentNullException(nameof(supplier), "Поставщик не может быть null.");
 
             Supplier = supplier;
+        }
+
+        public void WriteOff(int amount, string reason)
+        {
+            if (string.IsNullOrWhiteSpace(reason))
+                throw new ArgumentException("Причина списания не может быть пустой.", nameof(reason));
+
+            RemoveStock(amount);
+            _writtenOffTotal += amount;
         }
     }
 }
