@@ -60,4 +60,15 @@ public class Product
             _quantity = value;
         }
     }
+    // Вычисляемое свойство: своего поля нет, значение выводится из других полей
+    public decimal TotalPrice
+    {
+        get { return _price * _quantity; }
+    }
+
+    // Ещё одно «производное» свойство — просто для удобства чтения кода
+    public bool IsOutOfStock
+    {
+        get { return _quantity == 0; }
+    }
 }
