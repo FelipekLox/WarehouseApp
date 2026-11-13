@@ -14,15 +14,15 @@ namespace WarehouseApp
             warehouse.Add(drill);
             warehouse.Add(paint);
 
-            drill.RemoveStock(5);   // отгрузка клиенту
-            paint.AddStock(10);     // приёмка поставки
+            drill.RemoveStock(5);
+            paint.AddStock(10);
 
             Console.WriteLine($"Позиций на складе: {warehouse.Count} из {warehouse.Capacity}");
             Console.WriteLine($"Суммарная стоимость: {warehouse.GetTotalValue():N2} руб.");
 
             try
             {
-                drill.RemoveStock(1000); // нельзя отгрузить больше, чем есть
+                drill.RemoveStock(1000);
             }
             catch (InvalidOperationException ex)
             {
@@ -34,7 +34,7 @@ namespace WarehouseApp
                 Console.WriteLine($"{p.Sku} | {p.Name} | {p.Quantity} шт. | {p.TotalPrice:N2} руб.");
             }
 
-            drill.SetMinStock(20); // остаток 7 < 20, значит IsBelowMinStock станет true
+            drill.SetMinStock(20);
 
             Console.WriteLine("\nПозиции ниже минимального остатка:");
             foreach (Product p in warehouse.GetProducts())
