@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WarehouseApp
 {
@@ -10,8 +6,33 @@ namespace WarehouseApp
     {
         static void Main(string[] args)
         {
-            Product p = new Product("sku-001", "Ноутбук", 75000m, 10);
-            Console.WriteLine($"{p.Sku}: {p.Name}, цена: {p.Price}, остаток: {p.Quantity}");
+            Warehouse warehouse = new Warehouse("ЛЦ «Восточный»", 10);
+
+            Product drill = new Product("sku-001", "Дрель аккумуляторная", 7490m, 12);
+            Product paint = new Product("sku-002", "Краска фасадная, 10 л", 1890m, 40);
+
+            warehouse.Add(drill);
+            warehouse.Add(paint);
+
+            drill.RemoveStock(5);   // отгрузка клиенту
+            paint.AddStock(10);     // приёмка поставки
+
+            Console.WriteLine($"Позиций на складе: {warehouse.Count} из {warehouse.Capacity}");
+            Console.WriteLine($"Суммарная стоимость: {warehouse.GetTotalValue():N2} руб.");
+
+            try
+            {
+                drill.RemoveStock(1000); // нельзя отгрузить больше, чем есть
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine("Ошибка: " + ex.Message);
+            }
+
+            foreach (Product p in warehouse.GetProducts())
+            {
+                Console.WriteLine($"{p.Sku} | {p.Name} | {p.Quantity} шт. | {p.TotalPrice:N2} руб.");
+            }
         }
     }
 }
