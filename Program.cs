@@ -33,6 +33,17 @@ namespace WarehouseApp
             {
                 Console.WriteLine($"{p.Sku} | {p.Name} | {p.Quantity} шт. | {p.TotalPrice:N2} руб.");
             }
+
+            drill.SetMinStock(20); // остаток 7 < 20, значит IsBelowMinStock станет true
+
+            Console.WriteLine("\nПозиции ниже минимального остатка:");
+            foreach (Product p in warehouse.GetProducts())
+            {
+                if (p.IsBelowMinStock)
+                {
+                    Console.WriteLine($"{p.Sku} | {p.Name} | Остаток: {p.Quantity} (мин: {p.MinStock})");
+                }
+            }
         }
     }
 }
