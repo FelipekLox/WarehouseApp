@@ -9,6 +9,7 @@ namespace WarehouseApp
         private decimal _price;
         private int _quantity;
         private int _minStock;
+        private Supplier _supplier;
 
         public Product(string sku, string name, decimal price, int quantity, int minStock = 0)
         {
@@ -89,6 +90,12 @@ namespace WarehouseApp
             get { return _quantity < _minStock; }
         }
 
+        public Supplier Supplier
+        {
+            get { return _supplier; }
+            private set { _supplier = value; }
+        }
+
         public void AddStock(int amount)
         {
             if (amount <= 0)
@@ -119,6 +126,14 @@ namespace WarehouseApp
         public void SetMinStock(int value)
         {
             MinStock = value;
+        }
+
+        public void AssignSupplier(Supplier supplier)
+        {
+            if (supplier == null)
+                throw new ArgumentNullException(nameof(supplier), "Поставщик не может быть null.");
+
+            Supplier = supplier;
         }
     }
 }

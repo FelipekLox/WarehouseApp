@@ -34,6 +34,7 @@ namespace WarehouseApp
                 Console.WriteLine($"{p.Sku} | {p.Name} | {p.Quantity} шт. | {p.TotalPrice:N2} руб.");
             }
 
+            // Задача 1: Минимальный остаток
             drill.SetMinStock(20);
 
             Console.WriteLine("\nПозиции ниже минимального остатка:");
@@ -43,6 +44,31 @@ namespace WarehouseApp
                 {
                     Console.WriteLine($"{p.Sku} | {p.Name} | Остаток: {p.Quantity} (мин: {p.MinStock})");
                 }
+            }
+
+            // Задача 2: Поставщик
+            Supplier bosch = new Supplier("ООО «Роберт Бош»", "+7 495 560-95-60", "7712013895");
+            Supplier tikkurila = new Supplier("ООО «Тиккурила»", "+7 812 380-33-99", "7816056898");
+
+            drill.AssignSupplier(bosch);
+            paint.AssignSupplier(tikkurila);
+
+            Console.WriteLine("\nТовары и их поставщики:");
+            foreach (Product p in warehouse.GetProducts())
+            {
+                string supplierInfo = p.Supplier != null
+                    ? $"{p.Supplier.Name} (ИНН: {p.Supplier.Inn}, тел: {p.Supplier.Phone})"
+                    : "не назначен";
+                Console.WriteLine($"{p.Sku} | {p.Name} | Поставщик: {supplierInfo}");
+            }
+
+            try
+            {
+                drill.AssignSupplier(null);
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine("Ошибка назначения поставщика: " + ex.ParamName);
             }
         }
     }
